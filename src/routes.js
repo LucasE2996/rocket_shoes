@@ -1,14 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main';
+import Cart from './pages/Cart';
 
 export default function Routes() {
     return (
-        <BrowserRouter>
-            <Switch>
-                <Route path="/" exact component={Main} />
-            </Switch>
-        </BrowserRouter>
+        <Switch>
+            <Route path="/" exact component={Main} />
+            <Route path="/cart" exact component={Cart} />
+        </Switch>
     );
 }
