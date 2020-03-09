@@ -1,130 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdShoppingCart } from 'react-icons/md';
 
+import api from '../../services/api';
+import { formatPrice } from '../../util/format';
 import { ProductList } from './styles';
 
-export default function Main() {
+const Main = () => {
+    const [products, setProducts] = useState([]);
+
+    const getProducts = async () => {
+        return api
+            .get('products')
+            .then(response =>
+                response.data.map(product => ({
+                    ...product,
+                    priceFormatted: formatPrice(product.price),
+                }))
+            )
+            .catch(error => console.error(error));
+    };
+
+    useEffect(() => {
+        getProducts().then(response => setProducts(response));
+    }, []);
+
     return (
         <ProductList>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
+            {products.map(product => (
+                <li key={product.id}>
+                    <img src={product.image} alt={product.title} />
+                    <strong>{product.title}</strong>
+                    <span>{product.priceFormatted}</span>
 
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
+                    <button type="button">
+                        <div>
+                            <MdShoppingCart size={16} color="#FFF" />
+                            <p>3</p>
+                        </div>
 
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
-            <li>
-                <img
-                    src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                    alt="tenis"
-                />
-                <strong>Tênis do balacubacu</strong>
-                <span>R$ 129,90</span>
-
-                <button type="button">
-                    <div>
-                        <MdShoppingCart size={16} color="#FFF" />
-                        <p>3</p>
-                    </div>
-
-                    <span>Adicionar ao carrinho</span>
-                </button>
-            </li>
+                        <span>Adicionar ao carrinho</span>
+                    </button>
+                </li>
+            ))}
         </ProductList>
     );
-}
+};
+
+export default Main;
