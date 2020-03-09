@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
     MdRemoveCircleOutline,
     MdAddCircleOutline,
@@ -8,7 +9,7 @@ import {
 import colors from '../../styles/colors';
 import { Container, ProductTable, Total } from './styles';
 
-const Cart = () => {
+const Cart = ({ cart }) => {
     return (
         <Container>
             <ProductTable>
@@ -22,43 +23,46 @@ const Cart = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img
-                                src="https://static.netshoes.com.br/produtos/tenis-nike-sb-check-solar-cnvs-masculino/90/D12-2759-890/D12-2759-890_zoom2.jpg?ims=326x"
-                                alt="Tenis"
-                            />
-                        </td>
-                        <td>
-                            <strong>Tenis do balacubacu</strong>
-                            <span>R$ 129,90</span>
-                        </td>
-                        <td>
-                            <div>
-                                <button type="button">
-                                    <MdRemoveCircleOutline
-                                        size={20}
-                                        color={colors.green}
+                    {cart.map(product => (
+                        <tr>
+                            <td>
+                                <img src={product.image} alt={product.title} />
+                            </td>
+                            <td>
+                                <strong>{product.title}</strong>
+                                <span>{product.priceFormatted}</span>
+                            </td>
+                            <td>
+                                <div>
+                                    <button type="button">
+                                        <MdRemoveCircleOutline
+                                            size={20}
+                                            color={colors.green}
+                                        />
+                                    </button>
+                                    <input
+                                        type="number"
+                                        readOnly
+                                        value={product.amount}
                                     />
-                                </button>
-                                <input type="number" readOnly value={2} />
+                                    <button type="button">
+                                        <MdAddCircleOutline
+                                            size={20}
+                                            color={colors.green}
+                                        />
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>R$ 259,80</strong>
+                            </td>
+                            <td>
                                 <button type="button">
-                                    <MdAddCircleOutline
-                                        size={20}
-                                        color={colors.green}
-                                    />
+                                    <MdDelete size={20} color={colors.green} />
                                 </button>
-                            </div>
-                        </td>
-                        <td>
-                            <strong>R$ 259,80</strong>
-                        </td>
-                        <td>
-                            <button type="button">
-                                <MdDelete size={20} color={colors.green} />
-                            </button>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </ProductTable>
 
@@ -74,4 +78,8 @@ const Cart = () => {
     );
 };
 
-export default Cart;
+const mapStateToProps = state => ({
+    cart: state.cart,
+});
+
+export default connect(mapStateToProps)(Cart);
