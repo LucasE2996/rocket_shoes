@@ -9,9 +9,7 @@ import { formatPrice } from '../../util/format';
 import { ProductList } from './styles';
 import * as CartActions from '../../store/modules/cart/actions';
 
-const Main = ({ addToCart, amount }) => {
-    Reactotron.log(amount);
-
+const Main = ({ addToCartRequest, amount }) => {
     const [products, setProducts] = useState([]);
 
     const getProducts = async () => {
@@ -23,11 +21,11 @@ const Main = ({ addToCart, amount }) => {
                     priceFormatted: formatPrice(product.price),
                 }))
             )
-            .catch(error => console.error(error));
+            .catch(error => Reactotron.error(error));
     };
 
-    const handleAddCart = product => {
-        addToCart(product);
+    const handleAddCart = id => {
+        addToCartRequest(id);
     };
 
     useEffect(() => {
@@ -44,7 +42,7 @@ const Main = ({ addToCart, amount }) => {
 
                     <button
                         type="button"
-                        onClick={() => handleAddCart(product)}
+                        onClick={() => handleAddCart(product.id)}
                     >
                         <div>
                             <MdShoppingCart size={16} color="#FFF" />
