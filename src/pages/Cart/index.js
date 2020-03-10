@@ -11,7 +11,15 @@ import colors from '../../styles/colors';
 import { Container, ProductTable, Total } from './styles';
 import * as CartActions from '../../store/modules/cart/actions';
 
-const Cart = ({ cart, removeFromCart }) => {
+const Cart = ({ cart, removeFromCart, updateAmount }) => {
+    const increment = product => {
+        updateAmount(product.id, product.amount + 1);
+    };
+
+    const decrement = product => {
+        updateAmount(product.id, product.amount - 1);
+    };
+
     return (
         <Container>
             <ProductTable>
@@ -36,7 +44,10 @@ const Cart = ({ cart, removeFromCart }) => {
                             </td>
                             <td>
                                 <div>
-                                    <button type="button">
+                                    <button
+                                        type="button"
+                                        onClick={() => decrement(product)}
+                                    >
                                         <MdRemoveCircleOutline
                                             size={20}
                                             color={colors.green}
@@ -47,7 +58,10 @@ const Cart = ({ cart, removeFromCart }) => {
                                         readOnly
                                         value={product.amount}
                                     />
-                                    <button type="button">
+                                    <button
+                                        type="button"
+                                        onClick={() => increment(product)}
+                                    >
                                         <MdAddCircleOutline
                                             size={20}
                                             color={colors.green}
