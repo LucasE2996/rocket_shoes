@@ -1,4 +1,5 @@
 import { call, select, put, all, takeLatest } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 
 import api from '../../../services/api';
 import { addToCartSuccess, updateAmount } from './actions';
@@ -6,7 +7,7 @@ import { formatPrice } from '../../../util/format';
 
 /**
  * Middleware of addToCart reducer.
- * This "*" means generator function. Which is almost the same as async function but more powerful.
+ * This "*" after function means generator function. Which is almost the same as async function but more powerful.
  *
  * @param {Object} saga The object that is being sent as action that this saga is tracking.
  */
@@ -15,8 +16,17 @@ function* addToCart({ id }) {
         state.cart.find(p => p.id === id)
     );
 
+    const stock = yield call(api.get, `/stock/${id}`);
+
+    const stockAmount = stock.data.amount;
+    const currentAmount = productExists ? productExists.amount : 0;
+    const amount = currentAmount + 1;
+
+    if (amount > stockAmount) {
+        toast.error('Quantidade solicitada fora do estoque');
+        return;
+    }
     if (productExists) {
-        const amount = productExists.amount + 1;
         yield put(updateAmount(id, amount));
     } else {
         // yield is the same as await
