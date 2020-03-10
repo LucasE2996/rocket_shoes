@@ -10,8 +10,9 @@ import {
 import colors from '../../styles/colors';
 import { Container, ProductTable, Total } from './styles';
 import * as CartActions from '../../store/modules/cart/actions';
+import { formatPrice } from '../../util/format';
 
-const Cart = ({ cart, removeFromCart, updateAmount }) => {
+const Cart = ({ cart, total, removeFromCart, updateAmount }) => {
     const increment = product => {
         updateAmount(product.id, product.amount + 1);
     };
@@ -70,7 +71,7 @@ const Cart = ({ cart, removeFromCart, updateAmount }) => {
                                 </div>
                             </td>
                             <td>
-                                <strong>R$ 259,80</strong>
+                                <strong>{product.subtotal}</strong>
                             </td>
                             <td>
                                 <button
@@ -90,18 +91,40 @@ const Cart = ({ cart, removeFromCart, updateAmount }) => {
 
                 <Total>
                     <span>TOTAL</span>
-                    <strong>R$ 1920,26</strong>
+                    <strong>{total}</strong>
                 </Total>
             </footer>
         </Container>
     );
 };
 
+/**
+ * Maps the redux state as component props. Here is the place for all
+ * formatting and "business logic" to the state object.
+ *
+ * @param {Object} state The state that comes from the reducer.
+ */
 const mapStateToProps = state => ({
-    cart: state.cart,
+    cart: state.cart.map(product => ({
+        ...product,
+        subtotal: formatPrice(product.price * product.amount),
+    })),
+    total: formatPrice(
+        state.cart.reduce((total, product) => {
+            return total + product.price * product.amount;
+        }, 0)
+    ),
 });
 
+/**
+ * Maps the dispatch actions as component props.
+ *
+ * @param {Function} dispatch Function responsible for the update of all Redux reducers.
+ */
 const mapDispatchToProps = dispatch =>
     bindActionCreators(CartActions, dispatch);
 
+/**
+ * Wraps the component as a Redux component.
+ */
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);

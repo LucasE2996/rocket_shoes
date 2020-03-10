@@ -3,8 +3,8 @@ import produce from 'immer';
 /**
  * Called when any dispatch from react-redux is fired.
  *
- * @param state
- * @param action The Action object that comes from dispatch function.
+ * @param state The old state of this reducer.
+ * @param action The Action object that comes from dispatch function, or current state.
  */
 export default function cart(state = [], action) {
     switch (action.type) {
