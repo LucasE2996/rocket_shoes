@@ -1,6 +1,6 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     MdRemoveCircleOutline,
     MdAddCircleOutline,
@@ -12,13 +12,33 @@ import { Container, ProductTable, Total } from './styles';
 import * as CartActions from '../../store/modules/cart/actions';
 import { formatPrice } from '../../util/format';
 
-const Cart = ({ cart, total, removeFromCart, updateAmountRequest }) => {
+const Cart = () => {
+    const totalValue = useSelector(state =>
+        formatPrice(
+            state.cart.reduce((total, product) => {
+                return total + product.price * product.amount;
+            }, 0)
+        )
+    );
+    const cart = useSelector(state =>
+        state.cart.map(product => ({
+            ...product,
+            subtotal: formatPrice(product.price * product.amount),
+        }))
+    );
+
+    const dispatch = useDispatch();
+
     const increment = product => {
-        updateAmountRequest(product.id, product.amount + 1);
+        dispatch(
+            CartActions.updateAmountRequest(product.id, product.amount + 1)
+        );
     };
 
     const decrement = product => {
-        updateAmountRequest(product.id, product.amount - 1);
+        dispatch(
+            CartActions.updateAmountRequest(product.id, product.amount - 1)
+        );
     };
 
     return (
@@ -76,7 +96,13 @@ const Cart = ({ cart, total, removeFromCart, updateAmountRequest }) => {
                             <td>
                                 <button
                                     type="button"
-                                    onClick={() => removeFromCart(product.id)}
+                                    onClick={() =>
+                                        dispatch(
+                                            CartActions.removeFromCart(
+                                                product.id
+                                            )
+                                        )
+                                    }
                                 >
                                     <MdDelete size={20} color={colors.green} />
                                 </button>
@@ -91,7 +117,7 @@ const Cart = ({ cart, total, removeFromCart, updateAmountRequest }) => {
 
                 <Total>
                     <span>TOTAL</span>
-                    <strong>{total}</strong>
+                    <strong>{totalValue}</strong>
                 </Total>
             </footer>
         </Container>
@@ -127,4 +153,4 @@ const mapDispatchToProps = dispatch =>
 /**
  * Wraps the component as a Redux component.
  */
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default Cart;

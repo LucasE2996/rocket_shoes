@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { MdShoppingCart } from 'react-icons/md';
 import Reactotron from 'reactotron-react-js';
@@ -9,7 +9,15 @@ import { formatPrice } from '../../util/format';
 import { ProductList } from './styles';
 import * as CartActions from '../../store/modules/cart/actions';
 
-const Main = ({ addToCartRequest, amount }) => {
+const Main = () => {
+    const dispatch = useDispatch();
+    const amountValue = useSelector(state =>
+        state.cart.reduce((amount, product) => {
+            amount[product.id] = product.amount;
+
+            return amount;
+        }, {})
+    );
     const [products, setProducts] = useState([]);
 
     const getProducts = async () => {
@@ -25,7 +33,7 @@ const Main = ({ addToCartRequest, amount }) => {
     };
 
     const handleAddCart = id => {
-        addToCartRequest(id);
+        dispatch(CartActions.addToCartRequest(id));
     };
 
     useEffect(() => {
@@ -46,7 +54,7 @@ const Main = ({ addToCartRequest, amount }) => {
                     >
                         <div>
                             <MdShoppingCart size={16} color="#FFF" />
-                            <p>{amount[product.id] || 0}</p>
+                            <p>{amountValue[product.id] || 0}</p>
                         </div>
 
                         <span>Adicionar ao carrinho</span>
@@ -57,15 +65,4 @@ const Main = ({ addToCartRequest, amount }) => {
     );
 };
 
-const mapStateToProps = state => ({
-    amount: state.cart.reduce((amount, product) => {
-        amount[product.id] = product.amount;
-
-        return amount;
-    }, {}),
-});
-
-const mapDispatchToProps = dispatch =>
-    bindActionCreators(CartActions, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default Main;
